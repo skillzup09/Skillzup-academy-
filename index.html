@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Learning App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- SCREEN GUARD (shown while viewing protected content if tab loses focus) -->
+    <div id="screen-guard">
+        <div>
+            <i class="fas fa-eye-slash"></i>
+            <p>Content hidden for security.<br>Return to this tab to continue viewing.</p>
+        </div>
+    </div>
+
+    <!-- AUTH SCREEN -->
+    <div id="auth-screen">
+        <img id="auth-logo" style="width:80px; height:80px; object-fit:contain; border-radius:20px; margin: 0 auto 25px; display:none; box-shadow: 0 10px 30px rgba(108, 99, 255, 0.2);">
+        <h1 id="auth-title" style="font-size: 2rem; color: #2D3436; margin-bottom: 5px;">Learning App</h1>
+        <p style="color: #888; margin-bottom: 30px; font-weight: 500;">Login to continue your journey</p>
+
+        <input class="input-box" type="text" id="a-name" placeholder="Full Name" style="display: none;">
+        <input class="input-box" type="email" id="a-email" placeholder="Email Address">
+        <input class="input-box" type="password" id="a-pass" placeholder="Password">
+
+        <button class="btn" onclick="submitAuth()" id="btn-auth">Sign In</button>
+        <div class="toggle-txt" onclick="toggleMode()" style="margin-top: 20px; font-size: 0.9rem; color: #888;">
+            <span id="txt-mode" style="color:var(--primary); font-weight:700;">Create new account</span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px; margin:25px 0;">
+            <div style="flex:1; height:1px; background:#eee;"></div>
+            <span style="color:#bbb; font-size:0.8rem;">OR</span>
+            <div style="flex:1; height:1px; background:#eee;"></div>
+        </div>
+
+        <button class="btn-outline" style="display:flex; align-items:center; justify-content:center; gap:10px; padding:14px; border-radius:16px;" onclick="loginWithGoogle()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png" style="width:20px; height:20px;">
+            <span style="font-weight:600; color:#444;">Continue with Google</span>
+        </button>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="main-app" style="display:none;">
+        <header>
+            <div style="display:flex; align-items:center;">
+                <img id="header-logo" src="">
+                <div style="overflow: hidden;">
+                    <h3 id="app-title-head" style="font-size:1.1rem; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">MyApp</h3>
+                    <small id="u-name" style="color:#aaa; font-weight:500;">Student</small>
+                </div>
+            </div>
+            <div style="position:relative; width: 40px; height: 40px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-shrink:0;" onclick="openNotif()">
+                <i class="fas fa-bell" style="font-size:1.2rem; color: #2D3436;"></i>
+                <div id="n-badge" style="width:10px;height:10px;background:#FF6B6B;border:2px solid white;border-radius:50%;position:absolute;top:8px;right:8px;display:none"></div>
+            </div>
+        </header>
+
+        <!-- HOME -->
+        <div id="tab-home" class="screen" style="display:block;">
+            <div class="promo-scroll" id="home-promo"></div>
+            <h3 style="margin:20px 20px 15px; color:#2D3436;">Topics</h3>
+            <div class="chip-con" id="cat-chips"></div>
+            <h3 style="margin:5px 20px 15px; color:#2D3436;">Popular Courses</h3>
+            <div id="home-courses" style="padding: 0 20px;"></div>
+        </div>
+
+        <!-- SEARCH -->
+        <div id="tab-courses" class="screen">
+            <div style="padding: 20px;">
+                <input class="input-box" id="search" placeholder="Search for courses..." onkeyup="renderC()" style="background:white; border:none; box-shadow: var(--card-shadow);">
+            </div>
+            <div id="all-courses" style="padding: 0 20px;"></div>
+        </div>
+
+        <!-- LIVE -->
+        <div id="tab-live" class="screen" style="padding: 20px;">
+            <div id="live-con"></div>
+        </div>
+
+        <!-- NOTIF -->
+        <div id="tab-notif" class="screen">
+            <h2 style="padding: 20px 20px 0; color: #2D3436; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-bell" style="color: var(--primary);"></i> Notifications
+            </h2>
+            <div id="list-notif" style="margin-top: 10px;"></div>
+        </div>
+
+        <!-- PROFILE -->
+        <div id="tab-profile" class="screen" style="padding: 20px;">
+            <div style="background: white; border-radius: 24px; padding: 25px; text-align: center; box-shadow: var(--card-shadow);">
+                <div style="width: 80px; height: 80px; background: var(--primary-grad); border-radius: 25px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;"><i class="fas fa-user"></i></div>
+                <h2 id="prof-name">User Name</h2>
+                <p id="prof-email" style="color:#aaa;">user@email.com</p>
+                <button class="btn-outline" style="border-radius: 12px; padding: 8px 20px; margin-top: 15px; font-size: 0.85rem;" onclick="openEditProfile()">Edit Profile</button>
+            </div>
+
+            <h3 style="margin: 25px 0 15px;">My Library</h3>
+            <div id="my-list"></div>
+
+            <div style="margin-top: 30px; margin-bottom: 50px;">
+                <div class="card" style="margin-bottom: 10px;" onclick="openSupport()">
+                    <div class="card-body" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:600;"><i class="fas fa-headset" style="margin-right:10px; color: var(--primary);"></i> Support</span> <i class="fas fa-chevron-right" style="color:#ddd"></i>
+                    </div>
+                </div>
+                <div class="card" onclick="document.getElementById('modal-policy').style.display='flex'">
+                    <div class="card-body" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:600;"><i class="fas fa-shield-alt" style="margin-right:10px; color: var(--primary);"></i> Privacy</span> <i class="fas fa-chevron-right" style="color:#ddd"></i>
+                    </div>
+                </div>
+                <button class="btn" style="background:#FF6B6B; box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3); margin-top:20px;" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="nav-bar" id="bottom-nav">
+        <div class="nav-icon active" data-tab="home" onclick="nav('home', this)"><i class="fas fa-home"></i> <span class="nav-text">Home</span></div>
+        <div class="nav-icon" data-tab="courses" onclick="nav('courses', this)"><i class="fas fa-compass"></i> <span class="nav-text">Explore</span></div>
+        <div class="nav-icon" data-tab="live" onclick="nav('live', this)"><i class="fas fa-play-circle"></i> <span class="nav-text">Live</span></div>
+        <div class="nav-icon" data-tab="profile" onclick="nav('profile', this)"><i class="fas fa-user"></i> <span class="nav-text">Profile</span></div>
+    </div>
+
+    <!-- MODAL: COURSE DETAIL -->
+    <div id="modal-course" class="modal">
+        <div class="modal-sheet" style="position:relative;">
+            <div style="text-align: center; margin-bottom: 20px;"><div style="width: 40px; height: 5px; background: #eee; border-radius: 10px; display: inline-block;"></div></div>
+            <button class="btn-outline" style="position:absolute; top:20px; right:20px; width:auto; padding:6px 12px; border-radius:10px;" onclick="closeModal('modal-course')"><i class="fas fa-times"></i></button>
+            <div id="c-det-cont"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: SECURE PDF VIEWER -->
+    <div id="modal-pdf" class="modal" style="z-index:4000;">
+        <div class="modal-sheet protected">
+            <div style="text-align: center; margin-bottom: 15px;"><div style="width: 40px; height: 5px; background: #eee; border-radius: 10px; display: inline-block;"></div></div>
+            <h3 id="pdf-title" style="margin-bottom: 15px;">Document</h3>
+            <div class="pdf-viewer-wrap">
+                <iframe id="pdf-frame" src="about:blank"></iframe>
+                <div class="pdf-watermark"><span id="pdf-watermark-text"></span></div>
+            </div>
+            <p class="security-note"><i class="fas fa-shield-alt"></i> Downloading, printing, and screenshots of this document are restricted.</p>
+            <button class="btn-outline" style="width: 100%; margin-top: 15px; padding: 12px; border-radius: 14px;" onclick="closePdfViewer()">Close</button>
+        </div>
+    </div>
+
+    <!-- MODAL: PAYMENT -->
+    <div id="modal-pay" class="modal" style="z-index: 3500;">
+        <div class="modal-sheet" style="text-align: center;">
+            <div style="text-align: center; margin-bottom: 20px;"><div style="width: 40px; height: 5px; background: #eee; border-radius: 10px; display: inline-block;"></div></div>
+            <h2 style="color:#2D3436; margin-bottom: 5px;">Secure Payment</h2>
+            <p style="color:#888; margin-bottom: 20px;">Scan the QR code to proceed</p>
+            <div style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); display: inline-block;">
+                <img id="qr-img" style="width:180px; height: 180px; object-fit: contain;">
+            </div>
+            <p id="upi-txt" style="font-weight:700; color:var(--primary); margin: 20px 0; background: rgba(108,99,255,0.1); padding: 10px; border-radius: 10px;"></p>
+
+            <div class="coupon-row">
+                <input class="input-box" id="coupon-code" placeholder="Coupon code (optional)" style="margin-bottom:0;">
+                <button class="btn btn-outline" onclick="applyCoupon()">Apply</button>
+            </div>
+            <div id="coupon-msg" class="coupon-msg"></div>
+            <p style="font-weight:700; color:#2D3436; margin-bottom: 15px;">Amount to Pay: <span id="pay-amount">$0</span></p>
+
+            <div class="card" style="border: 2px dashed #ccc; background: #FAFAFA;" onclick="document.getElementById('file-in').click()">
+                <div class="card-body">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 1.5rem; color: #888;"></i>
+                    <p style="color:#888; margin-top: 5px; font-size: 0.9rem;">Tap to upload screenshot</p>
+                </div>
+            </div>
+            <input type="file" id="file-in" accept="image/*" hidden onchange="showPre()">
+            <img id="prev-img" style="width:100%; border-radius:15px; margin-top:10px; display:none;">
+
+            <button class="btn" id="btn-send-pay" style="margin-top: 15px;" onclick="sendPay()">Submit Verification</button>
+            <button class="btn-outline" style="width: 100%; margin-top: 10px; padding: 12px; border-radius: 14px;" onclick="closeModal('modal-pay')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT PROFILE -->
+    <div id="modal-edit" class="modal">
+        <div class="modal-sheet">
+            <h3>Update Profile</h3><br>
+            <input class="input-box" id="ed-name" placeholder="Enter full name">
+            <button class="btn" onclick="saveProfile()">Update</button>
+            <button class="btn-outline" style="width: 100%; margin-top: 10px; padding: 12px; border-radius: 14px;" onclick="closeModal('modal-edit')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- MODAL: POLICY -->
+    <div id="modal-policy" class="modal">
+        <div class="modal-sheet">
+            <h3>Privacy Policy</h3>
+            <p id="policy-content" style="color:#636E72; line-height:1.6; margin-top:15px; white-space: pre-wrap;">Loading...</p>
+            <button class="btn" style="margin-top: 20px;" onclick="closeModal('modal-policy')">Close</button>
+        </div>
+    </div>
+
+    <!-- CONFETTI -->
+    <div id="confetti-modal" style="display:none; position:fixed; inset:0; background:rgba(255,255,255,0.9); z-index:9000; align-items:center; justify-content:center; text-align:center;">
+        <div class="pop-card" style="box-shadow: 0 20px 60px rgba(108, 99, 255, 0.2);">
+            <div id="particles"></div>
+            <h1 style="font-size:3rem; margin-bottom:10px;">🎉</h1>
+            <h2 style="color:#2D3436; margin-bottom:10px;">Purchased!</h2>
+            <p style="color:#888;">Course unlocked successfully.</p>
+            <button class="btn" style="margin-top: 20px;" onclick="document.getElementById('confetti-modal').style.display='none'">Start Learning</button>
+        </div>
+    </div>
+
+    <div id="toast-box">Alert Message</div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
